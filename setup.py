@@ -12,7 +12,7 @@ with open(join(dirname(__file__), 'pygraphy', '__init__.py'), 'r') as f:
 
 install_requires = [
     # "GraphQL-core-next>=1.1.0,<1.2.0"
-    "GraphQL-core=~3.2.0"
+    "graphql-core==3.2.0"
 ]
 
 dev_requires = [
