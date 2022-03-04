@@ -11,7 +11,8 @@ with open(join(dirname(__file__), 'pygraphy', '__init__.py'), 'r') as f:
     version = re.match(r".*__version__ = '(.*?)'", f.read(), re.S).group(1)
 
 install_requires = [
-    "GraphQL-core-next>=1.1.0,<1.2.0"
+    # "GraphQL-core-next>=1.1.0,<1.2.0"
+    "graphql-core>=3.2.0"
 ]
 
 dev_requires = [
@@ -37,18 +38,18 @@ setup(
     tests_require=dev_requires,
     python_requires=">=3.7,<4",
     extras_require={
-      "dev": dev_requires,
-      "web": ["starlette>=0.12.1,<0.13.0"]
+        "dev": dev_requires,
+        "web": ["starlette>=0.12.1,<0.13.0"]
     },
     classifiers=[
-      "Topic :: Software Development",
-      "Development Status :: 1 - Planning",
-      "Intended Audience :: Developers",
-      "License :: OSI Approved :: MIT License",
-      "Programming Language :: Python :: 3",
-      "Programming Language :: Python :: 3.7",
-      "Programming Language :: Python :: 3.8",
-      "Programming Language :: Python :: Implementation :: CPython",
-      "Programming Language :: Python :: Implementation :: PyPy",
+        "Topic :: Software Development",
+        "Development Status :: 1 - Planning",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: Implementation :: CPython",
+        "Programming Language :: Python :: Implementation :: PyPy",
     ]
 )
