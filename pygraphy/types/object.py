@@ -52,7 +52,8 @@ class ObjectType(InterfaceType):
                 raise ValidationError(f'{field} is an invalid field type')
 
             if field.ftype == _empty:
-                raise ValidationError(f'The return type of resolver "{cls.__name__}.{field.name}" must not be empty')
+                raise ValidationError(
+                    f'The return type of resolver "{cls.__name__}.{field.name}" must not be empty')
 
             print_type(field.ftype, except_types=(types.InputType))
 
@@ -108,7 +109,8 @@ class Object(metaclass=ObjectType):
             resolver = self.__get_resover(name, node, field, path)
             if not resolver:
                 try:
-                    tasks[name] = (getattr(self, name if name in keys else snake_cases), node, field, path)
+                    tasks[name] = (
+                        getattr(self, name if name in keys else snake_cases), node, field, path)
                 except AttributeError:
                     raise RuntimeError(
                         f'{name} is not a valid node of {self}', node, path
@@ -124,7 +126,8 @@ class Object(metaclass=ObjectType):
                     continue
 
                 if isawaitable(returned):
-                    tasks[name] = (asyncio.ensure_future(returned), node, field, path)
+                    tasks[name] = (asyncio.ensure_future(
+                        returned), node, field, path)
                 else:
                     tasks[name] = (returned, node, field, path)
 
@@ -151,11 +154,13 @@ class Object(metaclass=ObjectType):
                         result = None
                 else:
                     result = task
-                self.resolve_results[self.__get_field_name(name, node)] = result
+                self.resolve_results[self.__get_field_name(
+                    name, node)] = result
 
         for generator in generators:
             async for result in generator:
-                self.resolve_results[self.__get_field_name(name, node)] = result
+                self.resolve_results[self.__get_field_name(
+                    name, node)] = result
                 yield await self.__check_and_circular_resolve(tasks, error_collector)
 
         if not generators:
@@ -192,15 +197,27 @@ class Object(metaclass=ObjectType):
                 node.selection_set.selections, error_collector, path
             ):
                 pass
-        elif hasattr(result, '__iter__'):
-            for item in result:
-                if isinstance(item, Object):
-                    async for _ in await item._resolve(
-                        node.selection_set.selections,
-                        error_collector,
-                        path
-                    ):
-                        pass
+        elif hasattr(result, '__iter__') and not isinstance(result, str):
+
+            async def run_all(item):
+                async for _ in await item._resolve(
+                    node.selection_set.selections,
+                    error_collector,
+                    path
+                ):
+                    pass
+                
+            await asyncio.gather(*[run_all(item) for item in result])
+
+            # for item in result:
+            #     print(item)
+            #     if isinstance(item, Object):
+            #         async for _ in await item._resolve(
+            #             node.selection_set.selections,
+            #             error_collector,
+            #             path
+            #         ):
+            #             pass
 
     async def __resolve_fragment(self, node, error_collector, path):
         if isinstance(node, InlineFragmentNode):
