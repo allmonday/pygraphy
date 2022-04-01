@@ -11,8 +11,7 @@ with open(join(dirname(__file__), 'pygraphy', '__init__.py'), 'r') as f:
     version = re.match(r".*__version__ = '(.*?)'", f.read(), re.S).group(1)
 
 install_requires = [
-    # "GraphQL-core-next>=1.1.0,<1.2.0"
-    "graphql-core==3.2.0"
+    "GraphQL-core-next>=1.1.0,<1.2.0"
 ]
 
 dev_requires = [
