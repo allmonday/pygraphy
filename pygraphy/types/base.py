@@ -74,8 +74,6 @@ def print_type(gtype, nonnull=True, except_types=()):
 
 
 def load_literal_value(node, ptype):
-    if is_optional(ptype):
-        return load_literal_value(node, ptype.__args__[0])
     if isinstance(node, IntValueNode):
         return int(node.value)
     elif isinstance(node, FloatValueNode):
@@ -97,6 +95,8 @@ def load_literal_value(node, ptype):
             )
         return value
     elif isinstance(node, ObjectValueNode):
+        if is_optional(ptype):
+            return load_literal_value(node, ptype.__args__[0])
         data = {}
         keys = ptype.__dataclass_fields__.keys()
         for field in node.fields:
@@ -122,7 +122,8 @@ def load_variable(variable, ptype):
         keys = ptype.__dataclass_fields__.keys()
         for key, value in variable.items():
             snake_cases = to_snake_case(key)
-            data[snake_cases if key not in keys else key] = load_variable(value, ptype.__fields__[snake_cases].ftype)
+            data[snake_cases if key not in keys else key] = load_variable(
+                value, ptype.__fields__[snake_cases].ftype)
         return ptype(**data)
     elif is_list(ptype):
         return [load_variable(i, ptype.__args__[0]) for i in variable]
