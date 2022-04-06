@@ -197,7 +197,7 @@ class Object(metaclass=ObjectType):
                 node.selection_set.selections, error_collector, path
             ):
                 pass
-        elif hasattr(result, '__iter__') and not isinstance(result, str):
+        elif hasattr(result, '__iter__'):
 
             async def run_all(item):
                 async for _ in await item._resolve(
@@ -206,8 +206,9 @@ class Object(metaclass=ObjectType):
                     path
                 ):
                     pass
-                
-            await asyncio.gather(*[run_all(item) for item in result])
+
+            await asyncio.gather(*[run_all(item)
+                                   for item in result if isinstance(item, Object)])
 
             # for item in result:
             #     print(item)
